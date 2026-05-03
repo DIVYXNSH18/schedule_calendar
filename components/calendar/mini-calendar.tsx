@@ -1,11 +1,12 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import {
   buildMiniCalendarDays,
-  dateKey,
+  dateKeyTz,
   monthLabel,
-  sameDay,
   SHORT_DAY_NAMES,
+  tzParts,
 } from "@/lib/date-utils";
+import { useTimezone } from "@/components/calendar/timezone-context";
 import { cn } from "@/lib/utils";
 
 type MiniCalendarProps = {
@@ -26,6 +27,8 @@ export function MiniCalendar({
   onSelectDate,
 }: MiniCalendarProps) {
   const days = buildMiniCalendarDays(visibleMonth);
+  const { timezone } = useTimezone();
+  const tzLabel = timezone.label;
 
   return (
     <section className="m3-container mt-4 rounded-[28px] px-3 py-4">
@@ -58,25 +61,30 @@ export function MiniCalendar({
       </div>
 
       <div className="grid grid-cols-7 gap-1 text-center text-xs font-medium">
-        {days.map((day) => (
+        {days.map((day) => {
+          const dk = dateKeyTz(day.date, tzLabel);
+          const isSelected = dk === dateKeyTz(selectedDate, tzLabel);
+          const isToday = dk === dateKeyTz(today, tzLabel);
+          const { day: dayNum } = tzParts(day.date, tzLabel);
+          return (
           <button
-            key={day.key}
+            key={dk}
             type="button"
             onClick={() => onSelectDate(day.date)}
             className={cn(
               "m3-focus-ring mx-auto flex h-8 w-8 items-center justify-center rounded-full p-1.5 transition-all duration-200 hover:scale-105 hover:bg-calendar-surface-container-high active:scale-95",
               day.muted && "text-gray-400",
-              sameDay(day.date, selectedDate) &&
+              isSelected &&
                 "bg-calendar-primary-container font-bold text-calendar-primary hover:bg-calendar-primary-container",
-              sameDay(day.date, today) &&
-                !sameDay(day.date, selectedDate) &&
+              isToday && !isSelected &&
                 "border-2 border-calendar-primary text-calendar-primary",
             )}
-            aria-label={`Select ${dateKey(day.date)}`}
+            aria-label={`Select ${dk}`}
           >
-            {day.date.getDate()}
+            {dayNum}
           </button>
-        ))}
+          );
+        })}
       </div>
     </section>
   );

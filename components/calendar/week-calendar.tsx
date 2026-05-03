@@ -1,10 +1,15 @@
 import type { CalendarEventItem, EventDraft } from "@/components/calendar/types";
 import { CalendarEvent } from "@/components/calendar/calendar-event";
+import { useTimezone } from "@/components/calendar/timezone-context";
 import {
   addDays,
   dateKey,
+  dateKeyTz,
+  dayOfWeekTz,
   DAY_NAMES,
   sameDay,
+  currentMinutesInTz,
+  tzParts,
 } from "@/lib/date-utils";
 import { timeLabels } from "@/lib/calendar-data";
 import { cn } from "@/lib/utils";
@@ -33,6 +38,8 @@ export function WeekCalendar({
   onOpenEvent,
 }: WeekCalendarProps) {
   const days = Array.from({ length: DAY_COUNT }, (_, index) => addDays(weekStart, index));
+  const { timezone } = useTimezone();
+  const tzLabel = timezone.label;
 
   return (
     <main className="m3-container mb-3 mr-3 flex min-w-0 flex-1 flex-col overflow-hidden rounded-[32px]">
@@ -42,10 +49,13 @@ export function WeekCalendar({
             days={days}
             selectedDate={selectedDate}
             today={today}
+            tzOffset={timezone.offset}
+            tzLabel={tzLabel}
             onSelectDate={onSelectDate}
           />
           <AllDayRow
             days={days}
+            tzLabel={tzLabel}
             events={events.filter((event) => event.allDay)}
             onCreateEvent={onCreateEvent}
             onOpenEvent={onOpenEvent}
@@ -53,6 +63,7 @@ export function WeekCalendar({
           <TimeGrid
             days={days}
             today={today}
+            tzLabel={tzLabel}
             events={events.filter((event) => !event.allDay)}
             onCreateEvent={onCreateEvent}
             onOpenEvent={onOpenEvent}
@@ -67,47 +78,48 @@ function WeekHeader({
   days,
   selectedDate,
   today,
+  tzOffset,
+  tzLabel,
   onSelectDate,
 }: {
   days: Date[];
   selectedDate: Date;
   today: Date;
+  tzOffset: string;
+  tzLabel: string;
   onSelectDate: (date: Date) => void;
 }) {
   return (
     <div className="calendar-grid flex-shrink-0 border-b border-white/70 bg-white/35">
       <div className="flex w-16 items-end justify-center border-r border-white/70 pb-2 text-[10px] font-semibold text-gray-500">
-        GMT+05:30
+        {tzOffset}
       </div>
 
       {days.map((day) => {
-        const isToday = sameDay(day, today);
-        const isSelected = sameDay(day, selectedDate);
+        const isToday = dateKeyTz(day, tzLabel) === dateKeyTz(today, tzLabel);
+        const isSelected = dateKeyTz(day, tzLabel) === dateKeyTz(selectedDate, tzLabel);
+        const dow = dayOfWeekTz(day, tzLabel);
+        const { day: dayNum } = tzParts(day, tzLabel);
 
         return (
           <button
-            key={dateKey(day)}
+            key={dateKeyTz(day, tzLabel)}
             type="button"
             onClick={() => onSelectDate(day)}
             className="m3-focus-ring flex flex-col items-center justify-center border-r border-white/70 py-3 transition-colors last:border-r-0 hover:bg-calendar-surface-container-low"
           >
-            <span
-              className={cn(
-                "text-[11px] font-medium uppercase",
-                isToday ? "text-blue-600" : "text-gray-500",
-              )}
-            >
-              {DAY_NAMES[day.getDay()]}
+            <span className={cn("text-[11px] font-medium uppercase", isToday ? "text-blue-600" : "text-gray-500")}>
+              {DAY_NAMES[dow]}
             </span>
             <span
               className={cn(
                 "mt-1 flex h-10 w-10 items-center justify-center rounded-full text-xl transition-colors",
-                  isToday && "animate-m3-pop bg-calendar-primary text-white shadow-m3-container",
+                isToday && "animate-m3-pop bg-calendar-primary text-white shadow-m3-container",
                 isSelected && !isToday && "bg-calendar-primary-container text-calendar-primary",
                 !isToday && !isSelected && "text-2xl text-gray-600 hover:bg-gray-100",
               )}
             >
-              {day.getDate()}
+              {dayNum}
             </span>
           </button>
         );
@@ -118,11 +130,13 @@ function WeekHeader({
 
 function AllDayRow({
   days,
+  tzLabel,
   events,
   onCreateEvent,
   onOpenEvent,
 }: {
   days: Date[];
+  tzLabel: string;
   events: CalendarEventItem[];
   onCreateEvent: (draft: EventDraft) => void;
   onOpenEvent: (event: CalendarEventItem) => void;
@@ -131,17 +145,18 @@ function AllDayRow({
     <div className="calendar-grid min-h-11 flex-shrink-0 border-b border-white/70 bg-white/25">
       <div className="w-16 border-r border-white/70" />
       {days.map((day) => {
-        const dayEvents = events.filter((event) => event.date === dateKey(day));
+        const dk = dateKeyTz(day, tzLabel);
+        const dayEvents = events.filter((event) => event.date === dk);
 
         return (
           <div
-            key={dateKey(day)}
+            key={dk}
             role="button"
             tabIndex={0}
             onClick={() =>
               onCreateEvent({
                 title: "",
-                date: dateKey(day),
+                date: dk,
                 startMinutes: 9 * 60,
                 endMinutes: 10 * 60,
                 allDay: true,
@@ -154,7 +169,7 @@ function AllDayRow({
               if (event.key === "Enter") {
                 onCreateEvent({
                   title: "",
-                  date: dateKey(day),
+                  date: dk,
                   startMinutes: 9 * 60,
                   endMinutes: 10 * 60,
                   allDay: true,
@@ -225,12 +240,14 @@ function AllDayEvent({
 function TimeGrid({
   days,
   today,
+  tzLabel,
   events,
   onCreateEvent,
   onOpenEvent,
 }: {
   days: Date[];
   today: Date;
+  tzLabel: string;
   events: CalendarEventItem[];
   onCreateEvent: (draft: EventDraft) => void;
   onOpenEvent: (event: CalendarEventItem) => void;
@@ -243,6 +260,7 @@ function TimeGrid({
         <EventsLayer
           days={days}
           today={today}
+          tzLabel={tzLabel}
           events={events}
           onCreateEvent={onCreateEvent}
           onOpenEvent={onOpenEvent}
@@ -284,12 +302,14 @@ function TimeRows() {
 function EventsLayer({
   days,
   today,
+  tzLabel,
   events,
   onCreateEvent,
   onOpenEvent,
 }: {
   days: Date[];
   today: Date;
+  tzLabel: string;
   events: CalendarEventItem[];
   onCreateEvent: (draft: EventDraft) => void;
   onOpenEvent: (event: CalendarEventItem) => void;
@@ -297,8 +317,9 @@ function EventsLayer({
   return (
     <div className="absolute bottom-0 left-16 right-0 top-0 grid grid-cols-7">
       {days.map((day) => {
-        const dayKey = dateKey(day);
+        const dayKey = dateKeyTz(day, tzLabel);
         const dayEvents = events.filter((event) => event.date === dayKey);
+        const isToday = dateKeyTz(day, tzLabel) === dateKeyTz(today, tzLabel);
 
         return (
           <div
@@ -340,7 +361,7 @@ function EventsLayer({
               }
             }}
           >
-            {sameDay(day, today) ? <CurrentTimeIndicator /> : null}
+            {isToday ? <CurrentTimeIndicator tzLabel={tzLabel} /> : null}
             {dayEvents.map((event) => (
               <CalendarEvent key={event.id} event={event} onOpen={onOpenEvent} />
             ))}
@@ -351,9 +372,8 @@ function EventsLayer({
   );
 }
 
-function CurrentTimeIndicator() {
-  const now = new Date();
-  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+function CurrentTimeIndicator({ tzLabel }: { tzLabel: string }) {
+  const currentMinutes = currentMinutesInTz(tzLabel);
 
   return (
     <div

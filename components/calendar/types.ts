@@ -20,6 +20,8 @@ export type CalendarEventItem = {
   calendarId: string;
   tone: EventTone;
   type: "event" | "task";
+  subject?: string;
+  teacher?: string;
   location?: string;
   description?: string;
 };

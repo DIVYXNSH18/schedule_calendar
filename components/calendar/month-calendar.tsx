@@ -1,5 +1,6 @@
 import type { CalendarEventItem, EventDraft } from "@/components/calendar/types";
-import { buildMiniCalendarDays, dateKey, sameDay, SHORT_DAY_NAMES } from "@/lib/date-utils";
+import { buildMiniCalendarDays, dateKeyTz, SHORT_DAY_NAMES, tzParts } from "@/lib/date-utils";
+import { useTimezone } from "@/components/calendar/timezone-context";
 import { cn } from "@/lib/utils";
 
 type MonthCalendarProps = {
@@ -20,6 +21,8 @@ export function MonthCalendar({
   onOpenEvent,
 }: MonthCalendarProps) {
   const days = buildMiniCalendarDays(selectedDate);
+  const { timezone } = useTimezone();
+  const tzLabel = timezone.label;
 
   return (
     <main className="m3-container mb-3 mr-3 flex min-w-0 flex-1 flex-col overflow-hidden rounded-[32px]">
@@ -33,8 +36,11 @@ export function MonthCalendar({
 
       <div className="grid min-h-0 flex-1 grid-cols-7 grid-rows-6 overflow-y-auto">
         {days.map((day) => {
-          const key = dateKey(day.date);
+          const key = dateKeyTz(day.date, tzLabel);
           const dayEvents = events.filter((event) => event.date === key);
+          const isToday = key === dateKeyTz(today, tzLabel);
+          const isSelected = key === dateKeyTz(selectedDate, tzLabel);
+          const { day: dayNum } = tzParts(day.date, tzLabel);
 
           return (
             <div
@@ -65,13 +71,12 @@ export function MonthCalendar({
                 className={cn(
                   "mb-1 flex h-7 w-7 items-center justify-center rounded-full text-xs font-medium",
                   day.muted && "text-gray-400",
-                  sameDay(day.date, today) && "animate-m3-pop bg-calendar-primary text-white shadow-m3-container",
-                  sameDay(day.date, selectedDate) &&
-                    !sameDay(day.date, today) &&
+                  isToday && "animate-m3-pop bg-calendar-primary text-white shadow-m3-container",
+                  isSelected && !isToday &&
                     "bg-calendar-primary-container text-calendar-primary",
                 )}
               >
-                {day.date.getDate()}
+                {dayNum}
               </button>
 
               <div className="space-y-1">

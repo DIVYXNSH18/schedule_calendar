@@ -1,6 +1,75 @@
 export const DAY_NAMES = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
 export const SHORT_DAY_NAMES = ["S", "M", "T", "W", "T", "F", "S"];
 
+// ---------------------------------------------------------------------------
+// Timezone-aware helpers
+// ---------------------------------------------------------------------------
+
+/** Extract { year, month (1-based), day, hour, minute } in a given IANA tz */
+export function tzParts(date: Date, tz: string) {
+  const fmt = new Intl.DateTimeFormat("en-US", {
+    timeZone: tz,
+    year: "numeric", month: "2-digit", day: "2-digit",
+    hour: "2-digit", minute: "2-digit", hour12: false,
+  });
+  const p = Object.fromEntries(fmt.formatToParts(date).map((x) => [x.type, x.value]));
+  return {
+    year: Number(p.year),
+    month: Number(p.month),
+    day: Number(p.day),
+    hour: Number(p.hour) % 24,
+    minute: Number(p.minute),
+  };
+}
+
+/** Midnight of `date` expressed in the given timezone, returned as a UTC Date */
+export function startOfDayTz(date: Date, tz: string): Date {
+  const { year, month, day } = tzParts(date, tz);
+  // Build an ISO string that Intl can interpret as midnight in that tz
+  const iso = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}T00:00:00`;
+  // Use the tz offset at that moment to get the UTC equivalent
+  const probe = new Date(`${iso}Z`);
+  const offsetMs = probe.getTime() - new Date(
+    new Intl.DateTimeFormat("en-US", {
+      timeZone: tz, year: "numeric", month: "2-digit", day: "2-digit",
+      hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false,
+    }).format(probe).replace(
+      /(\d+)\/(\d+)\/(\d+),\s(\d+):(\d+):(\d+)/,
+      "$3-$1-$2T$4:$5:$6Z",
+    )
+  ).getTime();
+  return new Date(probe.getTime() + offsetMs);
+}
+
+/** "Today" as midnight in the given timezone */
+export function todayInTz(tz: string): Date {
+  return startOfDayTz(new Date(), tz);
+}
+
+/** Current hour+minute as total minutes in the given timezone */
+export function currentMinutesInTz(tz: string): number {
+  const { hour, minute } = tzParts(new Date(), tz);
+  return hour * 60 + minute;
+}
+
+/** dateKey (YYYY-MM-DD) computed in the given timezone */
+export function dateKeyTz(date: Date, tz: string): string {
+  const { year, month, day } = tzParts(date, tz);
+  return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+}
+
+/** Day-of-week index (0=Sun) in the given timezone */
+export function dayOfWeekTz(date: Date, tz: string): number {
+  const { year, month, day } = tzParts(date, tz);
+  return new Date(year, month - 1, day).getDay();
+}
+
+/** Start of week (Sunday midnight) in the given timezone */
+export function startOfWeekTz(date: Date, tz: string): Date {
+  const dow = dayOfWeekTz(date, tz);
+  return startOfDayTz(addDays(date, -dow), tz);
+}
+
 const MONTH_FORMATTER = new Intl.DateTimeFormat("en-US", {
   month: "long",
   year: "numeric",

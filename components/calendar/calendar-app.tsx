@@ -10,6 +10,7 @@ import { Sidebar } from "@/components/calendar/sidebar";
 import type { CalendarEventItem, CalendarView, EventDraft } from "@/components/calendar/types";
 import { WeekCalendar } from "@/components/calendar/week-calendar";
 import { calendarFilters, createInitialEvents } from "@/lib/calendar-data";
+import { TimezoneProvider, useTimezone } from "@/components/calendar/timezone-context";
 import {
   addDays,
   addMonths,
@@ -19,14 +20,26 @@ import {
   monthLabel,
   startOfDay,
   startOfWeek,
+  startOfWeekTz,
+  todayInTz,
 } from "@/lib/date-utils";
 
 const STORAGE_KEY = "schedule2-calendar-events";
+const STORAGE_VERSION = "v2-classes";
 
 export function CalendarApp() {
-  const [today, setToday] = useState(() => startOfDay(new Date()));
-  const [selectedDate, setSelectedDate] = useState(() => startOfDay(new Date()));
-  const [visibleMonth, setVisibleMonth] = useState(() => startOfDay(new Date()));
+  return (
+    <TimezoneProvider>
+      <CalendarAppInner />
+    </TimezoneProvider>
+  );
+}
+
+function CalendarAppInner() {
+  const { timezone } = useTimezone();
+  const [today, setToday] = useState(() => todayInTz(timezone.label));
+  const [selectedDate, setSelectedDate] = useState(() => todayInTz(timezone.label));
+  const [visibleMonth, setVisibleMonth] = useState(() => todayInTz(timezone.label));
   const [view, setView] = useState<CalendarView>("week");
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [events, setEvents] = useState<CalendarEventItem[]>(() =>
@@ -38,7 +51,7 @@ export function CalendarApp() {
   const [searchQuery, setSearchQuery] = useState("");
   const [editingDraft, setEditingDraft] = useState<EventDraft | null>(null);
 
-  const weekStart = useMemo(() => startOfWeek(selectedDate), [selectedDate]);
+  const weekStart = useMemo(() => startOfWeekTz(selectedDate, timezone.label), [selectedDate, timezone.label]);
   const headerLabel =
     view === "day"
       ? dayLabel(selectedDate)
@@ -62,6 +75,11 @@ export function CalendarApp() {
   }, []);
 
   useEffect(() => {
+    const version = window.localStorage.getItem(STORAGE_KEY + "-version");
+    if (version !== STORAGE_VERSION) {
+      window.localStorage.removeItem(STORAGE_KEY);
+      window.localStorage.setItem(STORAGE_KEY + "-version", STORAGE_VERSION);
+    }
     const storedEvents = window.localStorage.getItem(STORAGE_KEY);
 
     if (storedEvents) {
@@ -78,9 +96,14 @@ export function CalendarApp() {
   }, [events]);
 
   useEffect(() => {
-    const timer = window.setInterval(() => setToday(startOfDay(new Date())), 60_000);
+    const timer = window.setInterval(() => setToday(todayInTz(timezone.label)), 60_000);
     return () => window.clearInterval(timer);
-  }, []);
+  }, [timezone.label]);
+
+  // Re-compute today when timezone changes
+  useEffect(() => {
+    setToday(todayInTz(timezone.label));
+  }, [timezone.label]);
 
   const filteredEvents = useMemo(() => {
     const normalizedQuery = searchQuery.trim().toLowerCase();
@@ -236,7 +259,7 @@ export function CalendarApp() {
         onNext={goToNextRange}
       />
 
-      <div className="relative flex min-h-0 flex-1 overflow-hidden">
+      <div className="relative flex min-h-0 flex-1 overflow-hidden pl-3">
         {sidebarOpen ? (
           <button
             type="button"
@@ -245,6 +268,8 @@ export function CalendarApp() {
             className="fixed inset-x-0 bottom-0 top-20 z-30 bg-black/20 backdrop-blur-sm lg:hidden"
           />
         ) : null}
+
+        {renderCalendarView()}
 
         <Sidebar
           open={sidebarOpen}
@@ -258,8 +283,6 @@ export function CalendarApp() {
           onSelectDate={selectDate}
           onToggleCalendar={toggleCalendar}
         />
-
-        {renderCalendarView()}
       </div>
 
       <EventModal

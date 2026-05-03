@@ -39,6 +39,7 @@ type CalendarEventProps = {
 
 export function CalendarEvent({ event, onOpen }: CalendarEventProps) {
   const tone = toneClasses[event.tone];
+  const durationMins = event.endMinutes - event.startMinutes;
 
   return (
     <button
@@ -59,9 +60,11 @@ export function CalendarEvent({ event, onOpen }: CalendarEventProps) {
       <p className={cn("truncate text-xs font-semibold leading-tight", tone.title)}>
         {event.title}
       </p>
-      <p className={cn("truncate text-[10px] leading-tight", tone.time)}>
-        {humanTimeRange(event.startMinutes, event.endMinutes)}
-      </p>
+      {durationMins >= 45 && event.teacher && (
+        <p className={cn("truncate text-[10px] leading-tight mt-0.5", tone.time)}>
+          {event.teacher}
+        </p>
+      )}
     </button>
   );
 }

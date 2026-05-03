@@ -1,6 +1,13 @@
 import { CalendarEvent } from "@/components/calendar/calendar-event";
 import type { CalendarEventItem, EventDraft } from "@/components/calendar/types";
-import { dateKey, DAY_NAMES, sameDay } from "@/lib/date-utils";
+import { useTimezone } from "@/components/calendar/timezone-context";
+import {
+  dateKeyTz,
+  dayOfWeekTz,
+  DAY_NAMES,
+  currentMinutesInTz,
+  tzParts,
+} from "@/lib/date-utils";
 import { timeLabels } from "@/lib/calendar-data";
 import { cn } from "@/lib/utils";
 
@@ -22,7 +29,13 @@ export function DayCalendar({
   onCreateEvent,
   onOpenEvent,
 }: DayCalendarProps) {
-  const selectedKey = dateKey(selectedDate);
+  const { timezone } = useTimezone();
+  const tzLabel = timezone.label;
+  const selectedKey = dateKeyTz(selectedDate, tzLabel);
+  const todayKey = dateKeyTz(today, tzLabel);
+  const isToday = selectedKey === todayKey;
+  const dow = dayOfWeekTz(selectedDate, tzLabel);
+  const { day: dayNum } = tzParts(selectedDate, tzLabel);
   const allDayEvents = events.filter((event) => event.date === selectedKey && event.allDay);
   const timedEvents = events.filter((event) => event.date === selectedKey && !event.allDay);
 
@@ -32,26 +45,26 @@ export function DayCalendar({
         <div className="flex min-h-0 min-w-[420px] flex-1 flex-col">
           <div className="grid grid-cols-[64px_minmax(0,1fr)] border-b border-white/70 bg-white/35">
             <div className="flex items-end justify-center border-r border-white/70 pb-2 text-[10px] font-semibold text-gray-500">
-              GMT+05:30
+              {timezone.offset}
             </div>
             <div className="flex flex-col items-center justify-center py-2">
               <span
                 className={cn(
                   "text-[11px] font-medium uppercase",
-                  sameDay(selectedDate, today) ? "text-blue-600" : "text-gray-500",
+                  isToday ? "text-blue-600" : "text-gray-500",
                 )}
               >
-                {DAY_NAMES[selectedDate.getDay()]}
+                {DAY_NAMES[dow]}
               </span>
               <span
                 className={cn(
                   "mt-1 flex h-10 w-10 items-center justify-center rounded-full text-xl",
-                  sameDay(selectedDate, today)
+                  isToday
                     ? "animate-m3-pop bg-calendar-primary text-white shadow-m3-container"
                     : "bg-calendar-primary-container text-calendar-primary",
                 )}
               >
-                {selectedDate.getDate()}
+                {dayNum}
               </span>
             </div>
           </div>
@@ -130,7 +143,7 @@ export function DayCalendar({
                   });
                 }}
               >
-                {sameDay(selectedDate, today) ? <CurrentTimeIndicator /> : null}
+                {isToday ? <CurrentTimeIndicator tzLabel={tzLabel} /> : null}
                 {timedEvents.map((event) => (
                   <CalendarEvent key={event.id} event={event} onOpen={onOpenEvent} />
                 ))}
@@ -143,9 +156,8 @@ export function DayCalendar({
   );
 }
 
-function CurrentTimeIndicator() {
-  const now = new Date();
-  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+function CurrentTimeIndicator({ tzLabel }: { tzLabel: string }) {
+  const currentMinutes = currentMinutesInTz(tzLabel);
 
   return (
     <div

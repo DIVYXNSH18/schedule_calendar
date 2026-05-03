@@ -32,8 +32,8 @@ export function Sidebar({
   return (
     <aside
       className={cn(
-        "fixed bottom-0 left-0 top-20 z-40 flex w-72 flex-shrink-0 flex-col overflow-y-auto bg-transparent pl-3 pr-3 transition-transform duration-300 hide-scrollbar lg:static lg:top-auto lg:z-auto",
-        open ? "translate-x-0" : "-translate-x-full lg:hidden",
+        "fixed bottom-0 right-0 top-20 z-40 flex w-72 flex-shrink-0 flex-col overflow-y-auto bg-transparent pl-3 pr-3 transition-transform duration-300 hide-scrollbar lg:static lg:top-auto lg:z-auto",
+        open ? "translate-x-0" : "translate-x-full lg:hidden",
       )}
     >
       <CreateButton onCreate={onCreate} />

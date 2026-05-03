@@ -39,7 +39,7 @@ export function ScheduleCalendar({ events, onOpenEvent }: ScheduleCalendarProps)
                   <div className="flex items-center gap-2">
                     <span
                       className={cn(
-                        "h-2.5 w-2.5 rounded-full",
+                        "h-2.5 w-2.5 shrink-0 rounded-full",
                         event.tone === "blue" && "bg-blue-600",
                         event.tone === "teal" && "bg-teal-600",
                         event.tone === "violet" && "bg-violet-600",
@@ -47,11 +47,14 @@ export function ScheduleCalendar({ events, onOpenEvent }: ScheduleCalendarProps)
                         event.tone === "rose" && "bg-rose-600",
                       )}
                     />
-                    <span className="font-medium text-gray-900">{event.title}</span>
+                    <span className="font-semibold text-gray-900">{event.title}</span>
                   </div>
+                  {event.teacher && (
+                    <div className="mt-0.5 text-sm text-gray-500">👤 {event.teacher}</div>
+                  )}
                   <div className="mt-1 text-sm text-gray-600">
-                    {event.allDay ? "All day" : humanTimeRange(event.startMinutes, event.endMinutes)}
-                    {event.location ? ` · ${event.location}` : ""}
+                    🕐 {event.allDay ? "All day" : humanTimeRange(event.startMinutes, event.endMinutes)}
+                    {event.location ? ` · 📍 ${event.location}` : ""}
                   </div>
                 </div>
               </button>
