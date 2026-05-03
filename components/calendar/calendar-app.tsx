@@ -19,13 +19,14 @@ import {
   headerRangeLabel,
   monthLabel,
   startOfDay,
+  startOfDayTz,
   startOfWeek,
   startOfWeekTz,
   todayInTz,
 } from "@/lib/date-utils";
 
 const STORAGE_KEY = "schedule2-calendar-events";
-const STORAGE_VERSION = "v2-classes";
+const STORAGE_VERSION = "v3-recurring";
 
 export function CalendarApp() {
   return (
@@ -126,7 +127,7 @@ function CalendarAppInner() {
   }, [events, searchQuery, visibleCalendarIds]);
 
   function selectDate(date: Date) {
-    const cleanDate = startOfDay(date);
+    const cleanDate = startOfDayTz(date, timezone.label);
     setSelectedDate(cleanDate);
     setVisibleMonth(cleanDate);
   }
@@ -278,8 +279,8 @@ function CalendarAppInner() {
           today={today}
           visibleCalendarIds={visibleCalendarIds}
           onCreate={(type) => openCreateDraft(type)}
-          onPreviousMonth={() => setVisibleMonth((month) => addMonths(month, -1))}
-          onNextMonth={() => setVisibleMonth((month) => addMonths(month, 1))}
+          onPreviousMonth={() => setVisibleMonth((month) => startOfDayTz(addMonths(month, -1), timezone.label))}
+          onNextMonth={() => setVisibleMonth((month) => startOfDayTz(addMonths(month, 1), timezone.label))}
           onSelectDate={selectDate}
           onToggleCalendar={toggleCalendar}
         />

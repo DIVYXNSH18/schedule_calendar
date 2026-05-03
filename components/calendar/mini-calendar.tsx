@@ -3,6 +3,7 @@ import {
   buildMiniCalendarDays,
   dateKeyTz,
   monthLabel,
+  parseDateKey,
   SHORT_DAY_NAMES,
   tzParts,
 } from "@/lib/date-utils";
@@ -70,7 +71,7 @@ export function MiniCalendar({
           <button
             key={dk}
             type="button"
-            onClick={() => onSelectDate(day.date)}
+            onClick={() => onSelectDate(parseDateKey(dk))}
             className={cn(
               "m3-focus-ring mx-auto flex h-8 w-8 items-center justify-center rounded-full p-1.5 transition-all duration-200 hover:scale-105 hover:bg-calendar-surface-container-high active:scale-95",
               day.muted && "text-gray-400",
