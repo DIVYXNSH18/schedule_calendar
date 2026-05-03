@@ -10,6 +10,8 @@ export type EventTone = "blue" | "teal" | "violet" | "amber" | "rose";
 
 export type CalendarView = "day" | "week" | "month" | "schedule";
 
+export type SessionStatus = "completed" | "ongoing" | "pending";
+
 export type CalendarEventItem = {
   id: string;
   title: string;
@@ -22,6 +24,10 @@ export type CalendarEventItem = {
   type: "event" | "task";
   subject?: string;
   teacher?: string;
+  teacherAvatar?: string;
+  price?: number;
+  isTrial?: boolean;
+  status?: SessionStatus;
   location?: string;
   description?: string;
 };

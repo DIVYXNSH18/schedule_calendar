@@ -11,7 +11,7 @@ import {
 import { timeLabels } from "@/lib/calendar-data";
 import { cn } from "@/lib/utils";
 
-const HOUR_HEIGHT = 48;
+const HOUR_HEIGHT = 64;
 const GRID_HEIGHT = HOUR_HEIGHT * 24;
 
 type DayCalendarProps = {
@@ -104,25 +104,35 @@ export function DayCalendar({
           </button>
 
           <div className="relative flex-1 overflow-y-auto">
-            <div className="relative min-h-[1152px]">
-              <div className="pointer-events-none absolute inset-0 grid grid-cols-[64px_minmax(0,1fr)]">
-                <div />
-                <div className="h-[1152px] border-r border-white/75" />
-              </div>
+            <div className="relative" style={{ height: GRID_HEIGHT }}>
 
-              {timeLabels.map((label) => (
-                <div key={label} className="flex h-12 w-full border-b border-calendar-line/80">
-                  <div className="relative top-[-10px] w-16 pr-2 text-right text-xs font-medium text-gray-500">
-                    {label}
+              {/* Hour lines + labels */}
+              {Array.from({ length: 24 }, (_, i) => (
+                <div
+                  key={i}
+                  className="absolute left-0 right-0"
+                  style={{ top: i * HOUR_HEIGHT }}
+                >
+                  <div
+                    className="absolute left-0 w-16 pr-2 text-right text-[10px] font-medium text-gray-400"
+                    style={{ top: -8 }}
+                  >
+                    {i === 0 ? "" : i < 12 ? `${i} AM` : i === 12 ? "12 PM" : `${i - 12} PM`}
                   </div>
-                  <div className="flex-1" />
+                  <div className="absolute left-16 right-0 top-0 border-t border-calendar-line/50" />
                 </div>
               ))}
 
+              {/* Vertical divider */}
+              <div className="pointer-events-none absolute inset-0">
+                <div className="absolute left-16 top-0 bottom-0 border-r border-white/75" />
+              </div>
+
+              {/* Click area + events */}
               <div
                 role="button"
                 tabIndex={0}
-                className="absolute bottom-0 left-16 right-0 top-0 cursor-pointer transition-colors hover:bg-white/35"
+                className="absolute top-0 bottom-0 left-16 right-0 cursor-pointer hover:bg-white/20 overflow-hidden"
                 onClick={(event) => {
                   const rect = event.currentTarget.getBoundingClientRect();
                   const y = Math.max(event.clientY - rect.top, 0);
@@ -130,22 +140,12 @@ export function DayCalendar({
                     Math.max(Math.floor((y / GRID_HEIGHT) * 24 * 60 / 30) * 30, 0),
                     23 * 60 + 30,
                   );
-
-                  onCreateEvent({
-                    title: "",
-                    date: selectedKey,
-                    startMinutes: minutes,
-                    endMinutes: Math.min(minutes + 60, 24 * 60),
-                    allDay: false,
-                    calendarId: "primary",
-                    tone: "blue",
-                    type: "event",
-                  });
+                  onCreateEvent({ title: "", date: selectedKey, startMinutes: minutes, endMinutes: Math.min(minutes + 60, 24 * 60), allDay: false, calendarId: "primary", tone: "blue", type: "event" });
                 }}
               >
                 {isToday ? <CurrentTimeIndicator tzLabel={tzLabel} /> : null}
                 {timedEvents.map((event) => (
-                  <CalendarEvent key={event.id} event={event} onOpen={onOpenEvent} />
+                  <CalendarEvent key={event.id} event={event} onOpen={onOpenEvent} hourHeight={HOUR_HEIGHT} />
                 ))}
               </div>
             </div>

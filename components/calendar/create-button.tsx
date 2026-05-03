@@ -33,7 +33,7 @@ export function CreateButton({ onCreate }: CreateButtonProps) {
         type="button"
         aria-expanded={open}
         onClick={() => setOpen((value) => !value)}
-        className="m3-pressable m3-focus-ring flex items-center gap-3 rounded-[28px] bg-white py-4 pl-4 pr-6 font-semibold shadow-create hover:shadow-create-hover"
+        className="m3-focus-ring flex items-center gap-3 rounded-[28px] bg-white py-4 pl-4 pr-6 font-semibold shadow-create hover:shadow-create-hover"
       >
         <GooglePlusIcon />
         <span className="text-sm text-gray-800">Create</span>

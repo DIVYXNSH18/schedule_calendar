@@ -67,35 +67,34 @@ export const timeLabels = [
 
 // Weekly class template — day 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri
 const WEEKLY_TEMPLATE = [
-  // MONDAY
-  { day: 1, id: "mon-1", title: "Mathematics",       subject: "Mathematics",      teacher: "Mr. Arjun Sharma",  start: 8*60,       end: 9*60,       calendarId: "maths",      tone: "violet", location: "Room 101" },
-  { day: 1, id: "mon-2", title: "Physics",            subject: "Physics",          teacher: "Ms. Priya Nair",   start: 9*60+15,    end: 10*60+15,   calendarId: "science",    tone: "blue",   location: "Lab 2" },
-  { day: 1, id: "mon-3", title: "English Literature", subject: "English",          teacher: "Mrs. Sunita Verma",start: 11*60,      end: 12*60,      calendarId: "language",   tone: "rose",   location: "Room 204" },
-  { day: 1, id: "mon-4", title: "History",            subject: "History",          teacher: "Mr. Ravi Kulkarni",start: 13*60,      end: 14*60,      calendarId: "humanities", tone: "teal",   location: "Room 305" },
-  { day: 1, id: "mon-5", title: "Physical Education", subject: "PE",               teacher: "Mr. Deepak Singh", start: 15*60,      end: 16*60,      calendarId: "arts",       tone: "amber",  location: "Sports Ground" },
+  { day: 1, id: "mon-1", title: "Mathematics",       subject: "Mathematics",      teacher: "Mr. Arjun Sharma",  start: 8*60,    end: 9*60,    calendarId: "maths",      tone: "violet", location: "Room 101",       price: 499,  isTrial: false },
+  { day: 1, id: "mon-2", title: "Physics",            subject: "Physics",          teacher: "Ms. Priya Nair",   start: 9*60,    end: 10*60,   calendarId: "science",    tone: "blue",   location: "Lab 2",          price: 599,  isTrial: false },
+  { day: 1, id: "mon-3", title: "English Literature", subject: "English",          teacher: "Mrs. Sunita Verma",start: 11*60,   end: 12*60,   calendarId: "language",   tone: "rose",   location: "Room 204",       price: 0,    isTrial: true  },
+  { day: 1, id: "mon-4", title: "History",            subject: "History",          teacher: "Mr. Ravi Kulkarni",start: 13*60,   end: 14*60,   calendarId: "humanities", tone: "teal",   location: "Room 305",       price: 399,  isTrial: false },
+  { day: 1, id: "mon-5", title: "Physical Education", subject: "PE",               teacher: "Mr. Deepak Singh", start: 15*60,   end: 16*60,   calendarId: "arts",       tone: "amber",  location: "Sports Ground",  price: 299,  isTrial: false },
   // TUESDAY
-  { day: 2, id: "tue-1", title: "Chemistry",          subject: "Chemistry",        teacher: "Ms. Anita Desai",  start: 8*60,       end: 9*60,       calendarId: "science",    tone: "blue",   location: "Lab 1" },
-  { day: 2, id: "tue-2", title: "Mathematics",        subject: "Mathematics",      teacher: "Mr. Arjun Sharma",  start: 9*60+15,    end: 10*60+15,   calendarId: "maths",      tone: "violet", location: "Room 101" },
-  { day: 2, id: "tue-3", title: "Geography",          subject: "Geography",        teacher: "Mrs. Kavita Joshi",start: 11*60,      end: 12*60,      calendarId: "humanities", tone: "teal",   location: "Room 202" },
-  { day: 2, id: "tue-4", title: "Hindi",              subject: "Hindi",            teacher: "Mr. Suresh Pandey",start: 13*60,      end: 14*60,      calendarId: "language",   tone: "rose",   location: "Room 108" },
-  { day: 2, id: "tue-5", title: "Art & Craft",        subject: "Art",              teacher: "Ms. Meera Pillai", start: 14*60+30,   end: 15*60+30,   calendarId: "arts",       tone: "amber",  location: "Art Room" },
+  { day: 2, id: "tue-1", title: "Chemistry",          subject: "Chemistry",        teacher: "Ms. Anita Desai",  start: 8*60,    end: 9*60,    calendarId: "science",    tone: "blue",   location: "Lab 1",          price: 599,  isTrial: false },
+  { day: 2, id: "tue-2", title: "Mathematics",        subject: "Mathematics",      teacher: "Mr. Arjun Sharma",  start: 9*60,    end: 10*60,   calendarId: "maths",      tone: "violet", location: "Room 101",       price: 499,  isTrial: false },
+  { day: 2, id: "tue-3", title: "Geography",          subject: "Geography",        teacher: "Mrs. Kavita Joshi",start: 11*60,   end: 12*60,   calendarId: "humanities", tone: "teal",   location: "Room 202",       price: 0,    isTrial: true  },
+  { day: 2, id: "tue-4", title: "Hindi",              subject: "Hindi",            teacher: "Mr. Suresh Pandey",start: 13*60,   end: 14*60,   calendarId: "language",   tone: "rose",   location: "Room 108",       price: 349,  isTrial: false },
+  { day: 2, id: "tue-5", title: "Art & Craft",        subject: "Art",              teacher: "Ms. Meera Pillai", start: 14*60,   end: 15*60,   calendarId: "arts",       tone: "amber",  location: "Art Room",       price: 249,  isTrial: false },
   // WEDNESDAY
-  { day: 3, id: "wed-1", title: "Biology",            subject: "Biology",          teacher: "Dr. Neha Gupta",   start: 8*60,       end: 9*60,       calendarId: "science",    tone: "blue",   location: "Lab 3" },
-  { day: 3, id: "wed-2", title: "English Literature", subject: "English",          teacher: "Mrs. Sunita Verma",start: 9*60+15,    end: 10*60+15,   calendarId: "language",   tone: "rose",   location: "Room 204" },
-  { day: 3, id: "wed-3", title: "Mathematics",        subject: "Mathematics",      teacher: "Mr. Arjun Sharma",  start: 11*60,      end: 12*60,      calendarId: "maths",      tone: "violet", location: "Room 101" },
-  { day: 3, id: "wed-4", title: "Computer Science",   subject: "Computer Science", teacher: "Mr. Vikram Rao",   start: 13*60,      end: 14*60+30,   calendarId: "science",    tone: "blue",   location: "Computer Lab" },
+  { day: 3, id: "wed-1", title: "Biology",            subject: "Biology",          teacher: "Dr. Neha Gupta",   start: 8*60,    end: 9*60,    calendarId: "science",    tone: "blue",   location: "Lab 3",          price: 549,  isTrial: false },
+  { day: 3, id: "wed-2", title: "English Literature", subject: "English",          teacher: "Mrs. Sunita Verma",start: 9*60,    end: 10*60,   calendarId: "language",   tone: "rose",   location: "Room 204",       price: 399,  isTrial: false },
+  { day: 3, id: "wed-3", title: "Mathematics",        subject: "Mathematics",      teacher: "Mr. Arjun Sharma",  start: 11*60,   end: 12*60,   calendarId: "maths",      tone: "violet", location: "Room 101",       price: 499,  isTrial: false },
+  { day: 3, id: "wed-4", title: "Computer Science",   subject: "Computer Science", teacher: "Mr. Vikram Rao",   start: 13*60,   end: 14*60,   calendarId: "science",    tone: "blue",   location: "Computer Lab",   price: 0,    isTrial: true  },
   // THURSDAY
-  { day: 4, id: "thu-1", title: "Physics",            subject: "Physics",          teacher: "Ms. Priya Nair",   start: 8*60,       end: 9*60,       calendarId: "science",    tone: "blue",   location: "Lab 2" },
-  { day: 4, id: "thu-2", title: "History",            subject: "History",          teacher: "Mr. Ravi Kulkarni",start: 9*60+15,    end: 10*60+15,   calendarId: "humanities", tone: "teal",   location: "Room 305" },
-  { day: 4, id: "thu-3", title: "Chemistry",          subject: "Chemistry",        teacher: "Ms. Anita Desai",  start: 11*60,      end: 12*60,      calendarId: "science",    tone: "blue",   location: "Lab 1" },
-  { day: 4, id: "thu-4", title: "Hindi",              subject: "Hindi",            teacher: "Mr. Suresh Pandey",start: 13*60,      end: 14*60,      calendarId: "language",   tone: "rose",   location: "Room 108" },
-  { day: 4, id: "thu-5", title: "Physical Education", subject: "PE",               teacher: "Mr. Deepak Singh", start: 15*60,      end: 16*60,      calendarId: "arts",       tone: "amber",  location: "Sports Ground" },
+  { day: 4, id: "thu-1", title: "Physics",            subject: "Physics",          teacher: "Ms. Priya Nair",   start: 8*60,    end: 9*60,    calendarId: "science",    tone: "blue",   location: "Lab 2",          price: 599,  isTrial: false },
+  { day: 4, id: "thu-2", title: "History",            subject: "History",          teacher: "Mr. Ravi Kulkarni",start: 9*60,    end: 10*60,   calendarId: "humanities", tone: "teal",   location: "Room 305",       price: 399,  isTrial: false },
+  { day: 4, id: "thu-3", title: "Chemistry",          subject: "Chemistry",        teacher: "Ms. Anita Desai",  start: 11*60,   end: 12*60,   calendarId: "science",    tone: "blue",   location: "Lab 1",          price: 599,  isTrial: false },
+  { day: 4, id: "thu-4", title: "Hindi",              subject: "Hindi",            teacher: "Mr. Suresh Pandey",start: 13*60,   end: 14*60,   calendarId: "language",   tone: "rose",   location: "Room 108",       price: 349,  isTrial: false },
+  { day: 4, id: "thu-5", title: "Physical Education", subject: "PE",               teacher: "Mr. Deepak Singh", start: 15*60,   end: 16*60,   calendarId: "arts",       tone: "amber",  location: "Sports Ground",  price: 299,  isTrial: false },
   // FRIDAY
-  { day: 5, id: "fri-1", title: "Biology",            subject: "Biology",          teacher: "Dr. Neha Gupta",   start: 8*60,       end: 9*60,       calendarId: "science",    tone: "blue",   location: "Lab 3" },
-  { day: 5, id: "fri-2", title: "Geography",          subject: "Geography",        teacher: "Mrs. Kavita Joshi",start: 9*60+15,    end: 10*60+15,   calendarId: "humanities", tone: "teal",   location: "Room 202" },
-  { day: 5, id: "fri-3", title: "Computer Science",   subject: "Computer Science", teacher: "Mr. Vikram Rao",   start: 11*60,      end: 12*60+30,   calendarId: "science",    tone: "blue",   location: "Computer Lab" },
-  { day: 5, id: "fri-4", title: "Art & Craft",        subject: "Art",              teacher: "Ms. Meera Pillai", start: 13*60,      end: 14*60,      calendarId: "arts",       tone: "amber",  location: "Art Room" },
-  { day: 5, id: "fri-5", title: "Mathematics",        subject: "Mathematics",      teacher: "Mr. Arjun Sharma",  start: 14*60+30,   end: 15*60+30,   calendarId: "maths",      tone: "violet", location: "Room 101" },
+  { day: 5, id: "fri-1", title: "Biology",            subject: "Biology",          teacher: "Dr. Neha Gupta",   start: 8*60,    end: 9*60,    calendarId: "science",    tone: "blue",   location: "Lab 3",          price: 549,  isTrial: false },
+  { day: 5, id: "fri-2", title: "Geography",          subject: "Geography",        teacher: "Mrs. Kavita Joshi",start: 9*60,    end: 10*60,   calendarId: "humanities", tone: "teal",   location: "Room 202",       price: 0,    isTrial: true  },
+  { day: 5, id: "fri-3", title: "Computer Science",   subject: "Computer Science", teacher: "Mr. Vikram Rao",   start: 11*60,   end: 12*60,   calendarId: "science",    tone: "blue",   location: "Computer Lab",   price: 649,  isTrial: false },
+  { day: 5, id: "fri-4", title: "Art & Craft",        subject: "Art",              teacher: "Ms. Meera Pillai", start: 13*60,   end: 14*60,   calendarId: "arts",       tone: "amber",  location: "Art Room",       price: 249,  isTrial: false },
+  { day: 5, id: "fri-5", title: "Mathematics",        subject: "Mathematics",      teacher: "Mr. Arjun Sharma",  start: 14*60,   end: 15*60,   calendarId: "maths",      tone: "violet", location: "Room 101",       price: 499,  isTrial: false },
 ] as const;
 
 // Generate events for N weeks around the anchor date
@@ -112,6 +111,8 @@ export function createInitialEvents(anchorDate: Date): CalendarEventItem[] {
         title: cls.title,
         subject: cls.subject,
         teacher: cls.teacher,
+        price: (cls as any).price,
+        isTrial: (cls as any).isTrial,
         date: dk,
         startMinutes: cls.start,
         endMinutes: cls.end,

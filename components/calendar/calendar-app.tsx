@@ -26,7 +26,7 @@ import {
 } from "@/lib/date-utils";
 
 const STORAGE_KEY = "schedule2-calendar-events";
-const STORAGE_VERSION = "v3-recurring";
+const STORAGE_VERSION = "v4-hourly";
 
 export function CalendarApp() {
   return (
